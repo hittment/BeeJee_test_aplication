@@ -1,0 +1,105 @@
+<?= $this->fw_alert()?>
+<div class="container">
+  <div class="row mt-3">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="SortBy" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Сортировка по </button>
+      <div class="dropdown-menu" aria-labelledby="SortBy"> <a class="dropdown-item" href="<?= z_add_url_get(array('ordBy'=>'1'))?>">Имя по возрастанию</a> <a class="dropdown-item" href="<?= z_add_url_get(array('ordBy'=>'2'))?>">Имя по убыванию</a> <a class="dropdown-item" href="<?= z_add_url_get(array('ordBy'=>'3'))?>">Email по возрастанию</a> <a class="dropdown-item" href="<?= z_add_url_get(array('ordBy'=>'4'))?>">Email по убыванию</a> <a class="dropdown-item" href="<?= z_add_url_get(array('ordBy'=>'5'))?>">Статус по возрастанию</a> <a class="dropdown-item" href="<?= z_add_url_get(array('ordBy'=>'6'))?>">Статус по убыванию</a> </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-lg-8 col-12">
+      <div class="row">
+        <? foreach($this->tasks as $task): ?>
+        <div class="col-sm-12 col-12 w-100 mt-2">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Имя: <span class="text-nowrap">
+                <?= $task['usr_name']?>
+                </span></h4>
+              <p class="card-title">E-Mail: <a class="text-nowrap">
+                <?= $task['usr_email']?>
+                </a></p>
+              <p class="card-text"><strong>Текст задачи:</strong> <br>
+                <?= $task['text']?>
+              </p>
+              <p class="card-text">Статус:
+                <?= $task['status'] == false ? '<span class="text-danger">В работе</span>':'<span class="text-success">Выполнена</span>' ?>
+              </p>
+              <p class="card-text">
+                <?= $task['edited'] == '1' ? '<span class="text-muted">Отредактированно администратором</span>':'' ?>
+              </p>
+              <? if($this->user['id']):?>
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-task" data-id="<?= $task['id']?>" data-text="<?= $task['text']?>" data-status="<?= $task['status']?>">Редактировать</button>			  
+              <? endif; ?>
+            </div>
+          </div>
+        </div>
+        <? endforeach; ?>
+      </div>
+      <? if($this->user['id']): ?>
+		 <!-- Modal -->
+              <div class="modal fade" id="edit-task" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="ModalLabel">Редактирование</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="edit_form">
+						<input type="hidden" name="id" id="edit_id">
+                        <div class="form-group">
+                          <label for="edit_text_input">Текст задачи</label>
+                          <textarea name="edit_text" class="form-control" id="edit_text_input" aria-describedby="task_text"></textarea>
+                        </div>
+                        <div class="form-group form-check">
+                          <input type="checkbox" name="status" class="form-check-input" id="edit_status">
+                          <label class="form-check-label" for="edit_status">Статус</label>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                      <button type="button" class="btn btn-primary" id="edit_approve">Применить</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+		<? endif; ?>
+    </div>
+    <hr>
+    <div class="col-lg-4 col-12">
+      <div class="row mx-0">
+        <div class="col-12 card bg-light mx-auto">
+          <h3 class="text-center card-header">Добавить задачу</h3>
+          <form class="card-body" id="add_task" method="get" action="../">
+            <input type="hidden" name="add_task">
+            <div class="form-group row">
+              <label for="usr_name_input" class="col-form-label">Имя пользователя</label>
+              <input required type="text" class="form-control" name="usr_name_input" id="usr_name_input" aria-describedby="basic-addon1">
+            </div>
+            <div class="form-group row">
+              <label for="usr_email_input" class="col-form-label">Email пользователя</label>
+              <input required type="email" class="form-control" name="usr_email_input" id="usr_email_input" aria-describedby="basic-addon1">
+            </div>
+            <div class="form-group row">
+              <label for="usr_task_input" class="col-form-label">Текст задачи</label>
+              <textarea required type="text" class="form-control" name="usr_task_input" id="usr_task_input" aria-describedby="basic-addon1"></textarea>
+            </div>
+            <p class="text-center">
+              <button type="submit" class="btn btn-primary" role="button">Добавить</button>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+	 
+  </div>
+	 <div class="row mt-2">
+        <div class="col-lg-12 col-12"> 
+          <!-- Подключение функции пагинатора -->
+          <?= page(z_add_url_get(array()).'&',3, $this->tasks_c, 3);?>
+        </div>
+      </div>
+</div>
